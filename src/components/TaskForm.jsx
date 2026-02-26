@@ -4,12 +4,11 @@ export default function TaskForm({ onAddTask }) {
   const [text, setText] = useState('');
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!text.trim()) return;
-    onAddTask(text);
-    setText('');
-  };
-
+  e.preventDefault();
+  if (!text.trim()) return; 
+  onAddTask(text);
+  setText('');
+};
   return (
     <form onSubmit={handleSubmit} className="task-form">
       <input
