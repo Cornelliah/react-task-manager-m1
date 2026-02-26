@@ -1,34 +1,51 @@
-import { useState } from 'react';
-import './App.css'
-import TaskForm from './components/TaskForm'
-import TaskList from './components/TaskList'
+import { useReducer } from 'react';
+import './App.css';
+import TaskForm from './components/TaskForm';
+import TaskList from './components/TaskList';
+
+
+const initialTasks = [];
+
+
+function tasksReducer(state, action) {
+  switch (action.type) {
+    case 'ADD_TASK':
+      return [
+        ...state,
+        {
+          id: Date.now(),
+          text: action.payload,
+          completed: false,
+        },
+      ];
+    case 'DELETE_TASK':
+      return state.filter(task => task.id !== action.payload);
+    case 'TOGGLE_TASK':
+      return state.map(task =>
+        task.id === action.payload
+          ? { ...task, completed: !task.completed }
+          : task
+      );
+    default:
+      return state;
+  }
+}
 
 function App() {
+  const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
 
-  const [tasks, setTasks] = useState([]);
-
+  
   const addTask = (text) => {
-    const newTask = {
-      id: Date.now(),
-      text: text,
-      completed: false,
-    };
-
-    setTasks([...tasks, newTask]);
+    if (!text.trim()) return; 
+    dispatch({ type: 'ADD_TASK', payload: text });
   };
 
   const handleDeleteTask = (taskId) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
+    dispatch({ type: 'DELETE_TASK', payload: taskId });
   };
 
   const handleToggleTask = (taskId) => {
-    setTasks(
-      tasks.map(task =>
-        task.id === taskId
-          ? { ...task, completed: !task.completed }
-          : task
-      )
-    );
+    dispatch({ type: 'TOGGLE_TASK', payload: taskId });
   };
 
   return (
